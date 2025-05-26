@@ -206,16 +206,13 @@
         }
 
         .framework-innovations-grid {
-            display: grid; grid-template-columns: 1fr; gap: 35px; align-items: center;
+            display: grid;
+            grid-template-columns: 1fr; 
+            gap: 20px; 
+            align-items: start; 
+            margin-bottom: 45px; 
         }
-        @media (min-width: 768px) {
-            /* MODIFIED: Both grids use 1fr 1fr for equal column widths */
-            .framework-innovations-grid { grid-template-columns: 1fr 1fr; }
-            .framework-innovations-grid.image-right { grid-template-columns: 1fr 1fr; }
-            /* Keep order properties to ensure Text | Image visual layout for .image-right */
-            .framework-innovations-grid.image-right .text-content { order: 1; }
-            .framework-innovations-grid.image-right .image-content { order: 2; }
-        }
+       
         .framework-innovations-grid .text-content h3 {
             font-family: 'Quicksand', sans-serif; color: var(--primary-color);
             font-size: 1.7rem; font-weight: 600; margin-bottom: 18px;
@@ -230,8 +227,7 @@
             font-size: 1.1rem; position: absolute; left: 0; top: 1px;
         }
         .architecture-img-placeholder {
-            width: 100%; 
-            /* max-width: 700px; /* This can be adjusted if needed, but 100% of grid column is fine */
+            width: 80%; 
             margin-left: auto; 
             margin-right: auto; 
             background-color: var(--white-color);
@@ -242,10 +238,11 @@
             justify-content: center;
             box-sizing: border-box;
             overflow: hidden;
+            min-height: 150px; /* Added for graceful degradation if image fails */
         }
         .architecture-img-placeholder img {
             width: 100%;
-            height: 100%;
+            height: auto; /* Changed from 100% to auto */
             object-fit: contain;
             display: block;
             border-radius: inherit;
@@ -521,7 +518,7 @@
 
                 </div>
                 <div class="image-content">
-                    <div class="architecture-img-placeholder" style="aspect-ratio: 16 / 9;">
+                    <div class="architecture-img-placeholder">
                         <img src="images/motivation.png" alt="Diagram illustrating challenges in video editing conditioning and UNIC's motivation">
                     </div>
                 </div>
@@ -539,25 +536,25 @@
                     </ul>
                 </div>
                 <div class="image-content">
-                    <div class="architecture-img-placeholder" style="aspect-ratio: 16 / 9;">
+                    <div class="architecture-img-placeholder">
                         <img src="images/pipeline.png" alt="UNIC Overall Pipeline Visualization - Figure 3">
                     </div>
                 </div>
             </div>
 
             <!-- Innovations Block -->
-            <div class="framework-innovations-grid image-right"> <!-- margin-top is handled by the general margin-bottom on framework-innovations-grid -->
-                 <div class="image-content">
-                    <div class="architecture-img-placeholder" style="aspect-ratio: 16 / 9;">
-                        <img src="images/innovations.png" alt="Diagram of Task-Aware RoPE & Condition Bias">
-                    </div>
-                </div>
+            <div class="framework-innovations-grid image-right"> 
                 <div class="text-content">
                     <!-- "Core Innovations" H3 removed -->
                     <h4>Task-aware RoPE</h4> <!-- Was H4 -->
                     <p style="font-size:0.9rem;">Dynamically assigns unique Rotary Positional Embedding (RoPE) frame indices based on task type and video length. This ensures coherent temporal understanding and correct alignment for diverse conditions.</p>
                     <h4>Condition Bias</h4> <!-- Was H4 -->
                     <p style="font-size:0.9rem;">Adds a task-specific learnable embedding to condition tokens. This helps the model differentiate target tasks when modalities overlap, resolving ambiguity effectively.</p>
+                </div>
+                <div class="image-content">
+                    <div class="architecture-img-placeholder">
+                        <img src="images/innovations.png" alt="Diagram of Task-Aware RoPE & Condition Bias">
+                    </div>
                 </div>
             </div>
         </div>
@@ -1361,7 +1358,7 @@
             <div id="TrainingStrategyTab" class="tab-content">
                 <h3>Training Strategy Visualization</h3>
                 <div style="display: flex; justify-content: center; margin-bottom: 25px;">
-                    <div class="architecture-img-placeholder" style="width: 90%; max-width: 750px; aspect-ratio: 16 / 7;">
+                    <div class="architecture-img-placeholder" style="width: 90%; max-width: 750px;">
                         <img src="images/strategy.png" alt="Figure illustrating the training stages/curriculum - e.g., Figure 2 from paper">
                     </div>
                 </div>
