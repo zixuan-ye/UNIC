@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNIC: Unified In-Context Video Editing</title>
+    <link rel="icon" href="image/icon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6C8EAD;
+            --primary-color-dark: #50728F;
+            --primary-color-light: #9AB0C7;
+            --accent-color: #8AA5BF;
+            --text-color-main: #343A40;
+            --text-color-subtle: #6c757d;
+            --bg-color-main: #FFFFFF;
+            --bg-color-subtle: #F8F9FA;
+            --border-color: #DEE2E6;
+            --white-color: #FFFFFF;
+            --neutral-shadow-light: rgba(0, 0, 0, 0.04);
+            --neutral-shadow-medium: rgba(0, 0, 0, 0.06);
+            --neutral-shadow-dark: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            line-height: 1.75;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color-main);
+            color: var(--text-color-main);
+            scroll-behavior: smooth;
+        }
+        .container {
+            width: 90%;
+            max-width: 1080px;
+            margin: auto;
+            padding: 0 15px;
+        }
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-light) 100%);
+            padding: 2.8rem 0 2.2rem;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--white-color);
+            text-shadow: 1px 1px 2px var(--neutral-shadow-dark);
+        }
+        header p.subtitle {
+            font-size: 1.15rem;
+            margin-top: 12px;
+            color: rgba(255,255,255,0.95);
+            font-weight: 400;
+            font-family: 'Poppins', sans-serif;
+        }
+        .header-links {
+            margin-top: 28px;
+        }
+        .header-links a {
+            color: var(--primary-color-dark);
+            background-color: var(--white-color);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 13px 26px;
+            border-radius: 30px;
+            transition: background-color 0.3s, color 0.3s, transform 0.2s, box-shadow 0.3s;
+            display: inline-block;
+            margin: 8px 10px;
+            font-size: 0.9rem;
+            font-family: 'Quicksand', sans-serif;
+            box-shadow: 0 3px 8px var(--neutral-shadow-medium);
+        }
+        .header-links a:hover {
+            background-color: var(--accent-color);
+            color: var(--white-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px var(--neutral-shadow-dark);
+        }
+
+        /* Author Section Styles */
+        .authors-section {
+            padding: 25px 0 20px; /* Adjusted padding */
+            background-color: var(--bg-color-main); 
+            text-align: center;
+            border-bottom: 1px solid var(--border-color); 
+        }
+        .authors-list {
+            margin-bottom: 18px; /* Increased margin */
+            font-size: 1.15rem; /* Slightly smaller for author list */
+            line-height: 1.8;   /* Increased line height for readability */
+            font-family: 'Poppins', sans-serif;
+        }
+        .authors-list a {
+            color: var(--primary-color-dark);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .authors-list a:hover {
+            text-decoration: underline;
+            color: var(--primary-color);
+        }
+        .authors-list sup {
+            font-size: 0.8em; /* Slightly smaller superscript */
+            vertical-align: super;
+            margin-left: 1px;
+            margin-right: 3px; /* Space after superscript before comma */
+            color: var(--text-color-subtle);
+            font-weight: 400; /* Ensure superscript isn't too bold */
+        }
+        .affiliations-info {
+            font-size: 1rem; /* Slightly smaller for affiliations */
+            color: var(--text-color-subtle);
+            line-height: 1.6;
+            font-family: 'Poppins', sans-serif;
+        }
+        .affiliations-info p {
+            margin: 5px 0; /* Adjusted margin for affiliation lines */
+        }
+        .affiliations-info sup {
+            font-weight: 600; /* Make symbols in legend bolder */
+            color: var(--text-color-main); /* Make symbols stand out */
+            font-size: 0.9em; /* Adjust size of sup in legend */
+            margin-right: 2px;
+        }
+        /* End Author Section Styles */
+
+        nav {
+            background: var(--white-color);
+            padding: 0.9rem 0;
+            text-align: center;
+            box-shadow: 0 2px 6px var(--neutral-shadow-light);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        nav a {
+            color: var(--text-color-main);
+            text-decoration: none;
+            padding: 10px 20px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: color 0.3s, background-color 0.3s;
+            border-radius: 8px;
+            margin: 0 7px;
+        }
+        nav a:hover, nav a.active-nav {
+            color: var(--white-color);
+            background-color: var(--primary-color);
+        }
+        .section {
+            padding: 45px 0;
+        }
+        .section:nth-child(even) {
+            background-color: var(--bg-color-subtle);
+        }
+        .section-inner {
+             padding: 30px 15px;
+        }
+        .section h2 {
+            color: var(--primary-color-dark);
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 14px;
+            display: inline-block;
+            margin-top: 0;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 1.9rem;
+            text-align: left;
+            margin-bottom: 35px;
+        }
+         .section h2.centered-title {
+            display: block;
+            text-align: center;
+            border-bottom: none;
+            font-size: 2.1rem;
+            margin-bottom: 40px;
+        }
+        .section h3 { /* General H3 for sections, if needed outside specific components */
+            text-align:center;
+            font-family: 'Quicksand', sans-serif;
+            font-weight:600;
+            color:var(--primary-color-dark);
+            font-size: 1.7rem;
+            margin-top:40px;
+            margin-bottom:25px;
+        }
+        .highlight-box {
+            background-color: var(--bg-color-subtle);
+            border-left: 5px solid var(--primary-color);
+            padding: 22px 28px;
+            margin: 30px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .highlight-box p {
+            margin:0;
+            font-size: 1.08rem;
+            color: var(--text-color-main);
+            font-weight: 400;
+        }
+
+        .framework-innovations-grid {
+            display: grid; grid-template-columns: 1fr; gap: 35px; align-items: center;
+        }
+        @media (min-width: 768px) {
+            /* MODIFIED: Both grids use 1fr 1fr for equal column widths */
+            .framework-innovations-grid { grid-template-columns: 1fr 1fr; }
+            .framework-innovations-grid.image-right { grid-template-columns: 1fr 1fr; }
+            /* Keep order properties to ensure Text | Image visual layout for .image-right */
+            .framework-innovations-grid.image-right .text-content { order: 1; }
+            .framework-innovations-grid.image-right .image-content { order: 2; }
+        }
+        .framework-innovations-grid .text-content h3 {
+            font-family: 'Quicksand', sans-serif; color: var(--primary-color);
+            font-size: 1.7rem; font-weight: 600; margin-bottom: 18px;
+            text-align: left;
+        }
+        .framework-innovations-grid .text-content p { font-size: 0.98rem; line-height: 1.8; margin-bottom: 14px; }
+        .framework-innovations-grid .text-content ul { list-style: none; padding-left: 0; }
+        .framework-innovations-grid .text-content li { position: relative; padding-left: 30px; margin-bottom: 12px; font-size: 0.92rem; }
+        .framework-innovations-grid .text-content li::before {
+            content: '➤';
+            color: var(--primary-color);
+            font-size: 1.1rem; position: absolute; left: 0; top: 1px;
+        }
+        .architecture-img-placeholder {
+            width: 100%; 
+            /* max-width: 700px; /* This can be adjusted if needed, but 100% of grid column is fine */
+            margin-left: auto; 
+            margin-right: auto; 
+            background-color: var(--white-color);
+            border: 1px solid var(--primary-color); 
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .architecture-img-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            border-radius: inherit;
+        }
+
+        /* Content Tabs for Capabilities & Comparisons */
+        .content-selector-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+        .content-tab-button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background-color: transparent;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-color-subtle);
+            border-radius: 25px;
+            transition: color 0.3s, background-color 0.3s, border-color 0.3s;
+        }
+        .content-tab-button:hover {
+            background-color: var(--primary-color-light);
+            color: var(--white-color);
+            border-color: var(--primary-color-light);
+        }
+        .content-tab-button.active {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            border-color: var(--primary-color-dark);
+        }
+        /* Task/Comparison entries within a tab-controlled area are hidden by default */
+        .content-display-area .task-entry, 
+        .content-display-area .comparison-entry {
+            display: none; 
+        }
+        /* Active task/comparison entry within a tab-controlled area is shown */
+        .content-display-area .task-entry.active,
+        .content-display-area .comparison-entry.active {
+            display: block; 
+        }
+
+
+        .task-entry, .comparison-entry { /* Default styling for all task/comparison cards */
+            margin-bottom: 40px; padding: 28px; background-color: var(--white-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px var(--neutral-shadow-light);
+        }
+        .showcase-header {
+            display: flex;
+            justify-content: flex-start; 
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 25px; 
+            flex-wrap: wrap; 
+        }
+        .showcase-header h3 { /* H3 specific to task/comparison cards */
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.7rem; font-weight: 600; color: var(--primary-color); margin: 0;
+            text-align: left;
+            flex-shrink: 0; 
+        }
+        .carousel-container {
+            position: relative; overflow: hidden; border-radius: 8px;
+        }
+        .carousel-track {
+            display: flex; transition: transform 0.45s ease-in-out;
+        }
+        .carousel-item {
+            min-width: 100%;
+            box-sizing: border-box; padding: 0 5px;
+            text-align: center;
+        }
+        .video-player {
+            width: 100%; 
+            max-width: 100%; 
+            aspect-ratio: 16 / 9;
+            display: block;
+            object-fit: cover;
+            border-radius: 6px;
+            background-color: var(--bg-color-subtle);
+            margin-bottom: 10px;
+        }
+        
+        .carousel-controls { 
+            display: flex; 
+            gap: 15px; 
+            align-items: center; 
+        }
+        .carousel-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 6px; 
+        }
+        .carousel-nav-label {
+            font-size: 0.85rem;
+            color: var(--text-color-subtle);
+            font-weight: 500;
+            font-family: 'Quicksand', sans-serif;
+        }
+        .carousel-button {
+            background-color: var(--primary-color-dark); 
+            border: 1px solid var(--primary-color-dark); 
+            color: var(--white-color); 
+            padding: 8px 12px; 
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem; 
+            line-height: 1;
+            transition: background-color 0.25s, color 0.25s, border-color 0.25s, transform 0.2s;
+        }
+        .carousel-button:hover {
+            background-color: var(--primary-color); 
+            color: var(--white-color);
+            border-color: var(--primary-color);
+            transform: scale(1.05); 
+        }
+        .carousel-button:disabled {
+            opacity: 0.6; 
+            cursor: not-allowed;
+            background-color: var(--text-color-subtle); 
+            border-color: var(--text-color-subtle);
+            color: var(--bg-color-subtle); 
+            transform: none; 
+        }
+        .caption { font-size: 0.88rem; color: var(--text-color-subtle); margin-top: 8px; text-align: center; font-weight: 300; }
+
+        .results-table-container { margin-top: 35px; overflow-x: auto; }
+        .results-table {
+            width: 100%; border-collapse: separate; border-spacing: 0;
+            font-size: 0.82rem;
+            box-shadow: 0 3px 10px var(--neutral-shadow-light);
+            border-radius: 10px; border: 1px solid var(--border-color);
+        }
+        .results-table th, .results-table td {
+            padding: 11px 13px; text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .results-table td:not(:last-child), .results-table th:not(:last-child) {
+             border-right: 1px solid var(--border-color);
+        }
+        .results-table thead th {
+            background-color: var(--primary-color); color: var(--white-color);
+            font-family: 'Quicksand', sans-serif; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.6px; font-size: 0.7rem;
+        }
+        .results-table thead th:first-child { border-top-left-radius: 9px; }
+        .results-table thead th:last-child { border-top-right-radius: 9px; }
+        .results-table tbody tr:last-child td:first-child { border-bottom-left-radius: 9px; }
+        .results-table tbody tr:last-child td:last-child { border-bottom-right-radius: 9px; }
+
+        .results-table tbody tr:nth-child(even) { background-color: var(--bg-color-subtle); }
+        .results-table tbody tr:hover { background-color: #EBF0F5; }
+        .results-table .method-name { text-align: left; font-weight: 500; }
+        .results-table .task-group-header {
+            background-color: var(--bg-color-subtle) !important;
+            font-weight: 700; font-family: 'Quicksand', sans-serif;
+            color: var(--primary-color-dark);
+            font-size: 0.85rem; text-align: center; letter-spacing: 0.5px;
+        }
+        .results-table strong { color: var(--text-color-main); font-weight: 600; }
+
+        footer {
+            text-align: center; padding: 28px;
+            background: var(--text-color-main);
+            color: rgba(255,255,255,0.88);
+            margin-top: 35px; font-size: 0.88rem; font-family: 'Poppins', sans-serif;
+        }
+        .tabs { /* For existing tabs in Results section */
+            display: flex; justify-content: center; margin-bottom: 28px;
+            border-bottom: 1px solid var(--border-color); padding-bottom: 10px;
+        }
+        .tab-button { /* For existing tabs in Results section */
+            padding: 11px 22px; cursor: pointer; border: none; background-color: transparent;
+            font-family: 'Quicksand', sans-serif; font-size: 1rem; font-weight: 600;
+            color: var(--text-color-subtle); margin: 0 7px; border-bottom: 3px solid transparent;
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        .tab-button.active { /* For existing tabs in Results section */
+            color: var(--primary-color-dark); border-bottom: 3px solid var(--primary-color-dark);
+        }
+        .tab-content { display: none; } /* For existing tabs in Results section */
+        .tab-content.active { display: block; } /* For existing tabs in Results section */
+        .tab-content h3 {
+             text-align:center; font-weight:600; color:var(--primary-color-dark); margin-top:35px; margin-bottom:18px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Unified In-Context Video Editing</h1>
+            <p class="subtitle">UNIC: One Unified Model, Diverse Video Editing Tasks, Creative Task Composition.</p>
+            <div class="header-links">
+                <a href="YOUR_PAPER_LINK_HERE" target="_blank">Read Paper</a>
+                <!-- <a href="YOUR_CODE_LINK_HERE" target="_blank">View Code</a> -->
+                <a href="YOUR_BENCHMARK_LINK_HERE" target="_blank">Access Benchmark</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="authors-section">
+        <div class="container">
+            <div class="authors-list">
+                <a href="https://zixuan-ye.github.io/" target="_blank">Zixuan Ye</a><sup>1,*</sup>,
+                <a href="https://xuanhuahe.github.io/" target="_blank">Xuanhua He</a><sup>1,*</sup>,
+                <a href="https://liuquande.github.io/" target="_blank">Quande Liu</a><sup>2,✉</sup>,
+                <a href="https://openreview.net/profile?id=~Qiulin_Wang1" target="_blank">Qiulin Wang</a><sup>2</sup>,
+                <a href="https://xinntao.github.io/" target="_blank">Xintao Wang</a><sup>2</sup>,
+                <a href="https://scholar.google.com/citations?user=P6MraaYAAAAJ&hl=en" target="_blank">Pengfei Wan</a><sup>2</sup>,<br>
+                <a href="https://openreview.net/profile?id=~Di_ZHANG3" target="_blank">Di ZHANG</a><sup>2</sup>,
+                <a href="https://openreview.net/profile?id=~Kun_Gai1" target="_blank">Kun Gai</a><sup>2</sup>,
+                <a href="https://cqf.io" target="_blank">Qifeng Chen</a><sup>1</sup>,
+                <a href="https://whluo.github.io/" target="_blank">Wenhan Luo</a><sup>1,✉</sup>
+            </div>
+            <div class="affiliations-info">
+                <p><sup>1</sup>The Hong Kong University of Science and Technology</p>
+                <p><sup>2</sup>Kuaishou Technology</p>
+                <p><sup>*</sup>Equal contribution</p>
+                <p><sup>✉</sup>Corresponding author</p>
+            </div>
+        </div>
+    </section>
+
+
+
+    <nav>
+        <div class="container">
+            <a href="#overview" class="active-nav">Overview</a>
+            <a href="#unic">UNIC</a>
+            <a href="#capabilities">Capabilities</a>
+            <a href="#comparisons">Visual Comparisons</a>
+            <a href="#results">Quantitative Results</a>
+        </div>
+    </nav>
+
+    <section id="overview" class="section">
+        <div class="container section-inner">
+            <h2 class="centered-title">Project Overview</h2>
+            <div class="highlight-box">
+                <p><strong>UNIC (UNified In-Context Video Editing)</strong> is a simple yet effective framework that unifies diverse video editing tasks within a single model in an in-context manner.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="unic" class="section">
+        <div class="container section-inner">
+            <h2 class="centered-title">UNIC: Framework & Designs</h2>
+
+            <!-- Motivation Block -->
+            <div class="framework-innovations-grid">
+                <div class="text-content">
+                    <h3>Motivation</h3>
+                    <p>
+                        <strong>(a) DDIM Inversion-based Methods (e.g., Video-P2P, FLATTEN):</strong>:
+                    </p>
+                    <ul style="margin-left: 20px; padding-left: 20px;">
+                        <li><strong>Sub-optimal performance.</strong></li>
+                        <li>Additional stage, which <strong>doubles the inference steps and overall cost</strong>.</li>
+                    </ul>
+                    <p>
+                        <strong>(b) Adapter-based Methods:</strong>:
+                    </p>
+                    <ul style="margin-left: 20px; padding-left: 20px;">
+                        <li>Requiring <strong>modifications to model architectures</strong>.</li>
+                        <li>Introducing <strong>parameter redundancy</strong> through the addition of adapter modules.</li>
+                    </ul>
+                    They are generally <strong>task-specific</strong>, requiring the training of separate modules for each distinct condition signal. This severely <strong>hinders task extendability and the unification</strong> of various editing capabilities.</li>
+
+                </div>
+                <div class="image-content">
+                    <div class="architecture-img-placeholder" style="aspect-ratio: 16 / 9;">
+                        <img src="images/motivation.png" alt="Diagram illustrating challenges in video editing conditioning and UNIC's motivation">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unified In-Context Framework Block -->
+            <div class="framework-innovations-grid">
+                <div class="text-content">
+                    <h3>Unified In-Context Framework</h3>
+                    <p>UNIC unifies video editing by processing all inputs—noisy video latents, reference video tokens, and varied multi-modal condition tokens—as a combined sequence. This allows the native attention mechanisms of a Diffusion Transformer (DiT) to learn complex editing tasks "in-context," offering flexibility and simplicity.</p>
+                    <ul>
+                        <li>Unified model for diverse tasks.</li>
+                        <li>Define input tokens into three types.</li>
+                        <li>No task-specific adapter modules.</li>
+                    </ul>
+                </div>
+                <div class="image-content">
+                    <div class="architecture-img-placeholder" style="aspect-ratio: 16 / 9;">
+                        <img src="images/pipeline.png" alt="UNIC Overall Pipeline Visualization - Figure 3">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Innovations Block -->
+            <div class="framework-innovations-grid image-right"> <!-- margin-top is handled by the general margin-bottom on framework-innovations-grid -->
+                 <div class="image-content">
+                    <div class="architecture-img-placeholder" style="aspect-ratio: 16 / 9;">
+                        <img src="images/innovations.png" alt="Diagram of Task-Aware RoPE & Condition Bias">
+                    </div>
+                </div>
+                <div class="text-content">
+                    <!-- "Core Innovations" H3 removed -->
+                    <h4>Task-aware RoPE</h4> <!-- Was H4 -->
+                    <p style="font-size:0.9rem;">Dynamically assigns unique Rotary Positional Embedding (RoPE) frame indices based on task type and video length. This ensures coherent temporal understanding and correct alignment for diverse conditions.</p>
+                    <h4>Condition Bias</h4> <!-- Was H4 -->
+                    <p style="font-size:0.9rem;">Adds a task-specific learnable embedding to condition tokens. This helps the model differentiate target tasks when modalities overlap, resolving ambiguity effectively.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="capabilities" class="section">
+        <div class="container section-inner">
+            <h2 class="centered-title">Capabilities</h2>
+            <p style="text-align:center; font-size: 1.05rem; color: var(--text-color-main); margin-bottom:30px; font-weight:300;"UNIC handles diverse video editing tasks. Select a task below to explore examples. UNIC also exhibits emergent task composition abilities, showcased further down.</p>
+            
+            <div class="content-selector-tabs" id="capabilities-selector">
+                <button class="content-tab-button active" data-target-id="task-id-insertion">ID Insertion</button>
+                <button class="content-tab-button" data-target-id="task-id-swap">ID Swap</button>
+                <button class="content-tab-button" data-target-id="task-delete">ID Deletion</button>
+                <button class="content-tab-button" data-target-id="task-re-camera">Re-Camera Control</button>
+                <button class="content-tab-button" data-target-id="task-stylization">Stylization</button>
+                <button class="content-tab-button" data-target-id="task-propagation">Propagation</button>
+            </div>
+
+            <div class="content-display-area" id="capabilities-content-area">
+                <div class="task-entry" id="task-id-insertion">
+                    <div class="showcase-header"><h3>ID Insertion</h3>
+                        <div class="carousel-controls">
+                            <div class="carousel-nav-item">
+                                <button class="carousel-button prev" onclick="slideCarousel('task-id-insertion-carousel', -1)">❮</button>
+                                <span class="carousel-nav-label">Previous</span>
+                            </div>
+                            <div class="carousel-nav-item">
+                                <span class="carousel-nav-label">Next</span>
+                                <button class="carousel-button next" onclick="slideCarousel('task-id-insertion-carousel', 1)">❯</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-container" id="task-id-insertion-carousel"><div class="carousel-track">
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_insertion_example2_poster.jpg">
+                                <source src="videos/insert-show2.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_insertion_cow_wings_poster.jpg">
+                                <source src="videos/insert-show1.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_insertion_example2_poster.jpg">
+                                <source src="videos/insert-show3.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_insertion_example2_poster.jpg">
+                                <source src="videos/insert-show4.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div></div>
+                </div>
+
+                <div class="task-entry" id="task-id-swap">
+                    <div class="showcase-header"><h3>ID Swap</h3>
+                        <div class="carousel-controls">
+                            <div class="carousel-nav-item">
+                                <button class="carousel-button prev" onclick="slideCarousel('task-id-swap-carousel', -1)">❮</button>
+                                <span class="carousel-nav-label">Previous</span>
+                            </div>
+                            <div class="carousel-nav-item">
+                                <span class="carousel-nav-label">Next</span>
+                                <button class="carousel-button next" onclick="slideCarousel('task-id-swap-carousel', 1)">❯</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-container" id="task-id-swap-carousel"><div class="carousel-track">
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_swap_cow_wings_poster.jpg">
+                                <source src="videos/swap-show1.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_swap_example2_poster.jpg">
+                                <source src="videos/swap-show2.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_swap_example2_poster.jpg">
+                                <source src="videos/swap-show3.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_swap_example2_poster.jpg">
+                                <source src="videos/swap-show4.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_swap_example2_poster.jpg">
+                                <source src="videos/swap-show5.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_swap_example2_poster.jpg">
+                                <source src="videos/swap-show6.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div></div>
+                </div>
+
+                <div class="task-entry" id="task-delete">
+                    <div class="showcase-header"><h3>ID Deletion</h3>
+                        <div class="carousel-controls">
+                            <div class="carousel-nav-item">
+                                <button class="carousel-button prev" onclick="slideCarousel('task-delete-carousel', -1)">❮</button>
+                                <span class="carousel-nav-label">Previous</span>
+                            </div>
+                            <div class="carousel-nav-item">
+                                <span class="carousel-nav-label">Next</span>
+                                <button class="carousel-button next" onclick="slideCarousel('task-delete-carousel', 1)">❯</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-container" id="task-delete-carousel"><div class="carousel-track">
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_insertion_cow_wings_poster.jpg">
+                                <source src="videos/delete-show1.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_deleteion_example2_poster.jpg">
+                                <source src="videos/delete-show2.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_deleteion_example2_poster.jpg">
+                                <source src="videos/delete-show3.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_deleteion_example2_poster.jpg">
+                                <source src="videos/delete-show4.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_deleteion_example2_poster.jpg">
+                                <source src="videos/delete-show5.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div></div>
+                </div>
+
+                <div class="task-entry" id="task-re-camera">
+                    <div class="showcase-header"><h3>Re-Camera Control</h3>
+                        <div class="carousel-controls">
+                            <div class="carousel-nav-item">
+                                <button class="carousel-button prev" onclick="slideCarousel('task-re-camera-carousel', -1)">❮</button>
+                                <span class="carousel-nav-label">Previous</span>
+                            </div>
+                            <div class="carousel-nav-item">
+                                <span class="carousel-nav-label">Next</span>
+                                <button class="carousel-button next" onclick="slideCarousel('task-re-camera-carousel', 1)">❯</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-container" id="task-re-camera-carousel"><div class="carousel-track">
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/re_camera_arc_right_poster.jpg">
+                                <source src="videos/recam-show2.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/re_camera_arc_right_poster.jpg">
+                                <source src="videos/recam-show1.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/re_camera_arc_right_poster.jpg">
+                                <source src="videos/recam-show3.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/re_camera_arc_right_poster.jpg">
+                                <source src="videos/recam-show4.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/re_camera_arc_right_poster.jpg">
+                                <source src="videos/recam-show5.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/re_camera_arc_right_poster.jpg">
+                                <source src="videos/recam-show6.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/re_camera_arc_right_poster.jpg">
+                                <source src="videos/recam-show7.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div></div>
+                </div>
+                <div class="task-entry" id="task-stylization">
+                    <div class="showcase-header"><h3>Stylization</h3>
+                        <div class="carousel-controls">
+                            <div class="carousel-nav-item">
+                                <button class="carousel-button prev" onclick="slideCarousel('task-stylization-carousel', -1)">❮</button>
+                                <span class="carousel-nav-label">Previous</span>
+                            </div>
+                            <div class="carousel-nav-item">
+                                <span class="carousel-nav-label">Next</span>
+                                <button class="carousel-button next" onclick="slideCarousel('task-stylization-carousel', 1)">❯</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-container" id="task-stylization-carousel"><div class="carousel-track">
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/stylization_artistic_poster.jpg">
+                                <source src="videos/style-show1.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/stylization_artistic_poster.jpg">
+                                <source src="videos/style-show2.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/stylization_artistic_poster.jpg">
+                                <source src="videos/style-show3.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/stylization_artistic_poster.jpg">
+                                <source src="videos/style-show4.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/stylization_artistic_poster.jpg">
+                                <source src="videos/style-show5.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/stylization_artistic_poster.jpg">
+                                <source src="videos/style-show6.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div></div>
+                </div>
+                <div class="task-entry" id="task-propagation">
+                    <div class="showcase-header"><h3>First-frame Propagation</h3>
+                        <div class="carousel-controls">
+                            <div class="carousel-nav-item">
+                                <button class="carousel-button prev" onclick="slideCarousel('task-propagation-carousel', -1)">❮</button>
+                                <span class="carousel-nav-label">Previous</span>
+                            </div>
+                            <div class="carousel-nav-item">
+                                <span class="carousel-nav-label">Next</span>
+                                <button class="carousel-button next" onclick="slideCarousel('task-propagation-carousel', 1)">❯</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-container" id="task-propagation-carousel"><div class="carousel-track">
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_insertion_cow_wings_poster.jpg">
+                                <source src="videos/prop-show1.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_propion_example2_poster.jpg">
+                                <source src="videos/prop-show2.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_propion_example2_poster.jpg">
+                                <source src="videos/prop-show3.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_propion_example2_poster.jpg">
+                                <source src="videos/prop-show4.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_propion_example2_poster.jpg">
+                                <source src="videos/prop-show5.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="carousel-item">
+                            <video class="video-player" playsinline autoplay muted loop poster="videos/posters/id_propion_example2_poster.jpg">
+                                <source src="videos/prop-show6.mp4" type="video/mp4"> Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div></div>
+                </div>
+            </div> <!-- End of capabilities-content-area for single tasks -->
+            
+            <hr style="border: 0; height: 1px; background-color: var(--border-color); margin: 55px 0 15px;">
+
+            <h3 style="text-align:center; font-family: 'Quicksand', sans-serif; font-weight:600; color:var(--primary-color-dark); font-size: 1.9rem; margin-top:40px; margin-bottom:25px;">
+                Emergent Task Composition
+            </h3>
+             <p style="text-align:center; font-size: 1.05rem; color: var(--text-color-main); margin-bottom:20px; font-weight:300;">UNIC also exhibits emergent task composition abilities.</p>
+
+            <div class="task-entry" id="comp-re-camera-style"> 
+                <div class="showcase-header"><h3>Re-Camera + Stylization</h3>
+                    <div class="carousel-controls">
+                        <div class="carousel-nav-item">
+                            <button class="carousel-button prev" onclick="slideCarousel('comp-re-camera-style-carousel', -1)">❮</button>
+                            <span class="carousel-nav-label">Previous</span>
+                        </div>
+                        <div class="carousel-nav-item">
+                            <span class="carousel-nav-label">Next</span>
+                            <button class="carousel-button next" onclick="slideCarousel('comp-re-camera-style-carousel', 1)">❯</button>
+                        </div>
+                    </div>
+                </div>
+                 <div class="carousel-container" id="comp-re-camera-style-carousel"><div class="carousel-track">
+                    <div class="carousel-item">
+                        <video class="video-player" playsinline autoplay muted loop poster="videos/posters/comp_re_camera_style_poster.jpg">
+                            <source src="videos/cam-style-1.mp4" type="video/mp4"> Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="carousel-item">
+                        <video class="video-player" playsinline autoplay muted loop poster="videos/posters/comp_re_camera_style_poster.jpg">
+                            <source src="videos/cam-style-2.mp4" type="video/mp4"> Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="carousel-item">
+                        <video class="video-player" playsinline autoplay muted loop poster="videos/posters/comp_re_camera_style_poster.jpg">
+                            <source src="videos/cam-style-3.mp4" type="video/mp4"> Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div></div>
+                <p class="caption">Applying style while changing camera view.</p>
+            </div>
+            <div class="task-entry" id="comp-insert-style"> 
+                <div class="showcase-header"><h3>ID + Stylization</h3>
+                    <div class="carousel-controls">
+                        <div class="carousel-nav-item">
+                            <button class="carousel-button prev" onclick="slideCarousel('comp-insert-style-carousel', -1)">❮</button>
+                            <span class="carousel-nav-label">Previous</span>
+                        </div>
+                        <div class="carousel-nav-item">
+                            <span class="carousel-nav-label">Next</span>
+                            <button class="carousel-button next" onclick="slideCarousel('comp-insert-style-carousel', 1)">❯</button>
+                        </div>
+                    </div>
+                </div>
+                 <div class="carousel-container" id="comp-insert-style-carousel"><div class="carousel-track">
+                    <div class="carousel-item">
+                        <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_input_poster.jpg">
+                            <source src="videos/id_style_1.mp4" type="video/mp4"> Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="carousel-item">
+                        <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_vace_poster.jpg">
+                            <source src="videos/id_style_2.mp4" type="video/mp4"> Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="carousel-item">
+                        <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_vace_poster.jpg">
+                            <source src="videos/id_style_3.mp4" type="video/mp4"> Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div></div>
+                <p class="caption">Inserting/Swapping an ID and applying an artistic style simultaneously.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="comparisons" class="section">
+        <div class="container section-inner">
+            <h2 class="centered-title">Visual Comparisons with Other Methods</h2>
+            <p style="text-align:center; font-size: 1.05rem; color: var(--text-color-main); margin-bottom:30px; font-weight:300;">Showcasing UNIC's visual quality against other methods. Select a comparison task below. For detailed metrics, see <a href="#results" style="color: var(--primary-color-dark); font-weight:500;">Quantitative Results</a>.</p>
+
+            <div class="content-selector-tabs" id="comparisons-selector">
+                <button class="content-tab-button active" data-target-id="comparison-id-insertion">ID Insertion</button>
+                <button class="content-tab-button" data-target-id="comparison-id-swap">ID Swap</button>
+                <button class="content-tab-button" data-target-id="comparison-delete">ID Deletion</button>
+                <button class="content-tab-button" data-target-id="comparison-recam">Re-Camera Control</button>
+                <button class="content-tab-button" data-target-id="comparison-prop">Propagation</button>
+                <button class="content-tab-button" data-target-id="comparison-style">Stylization</button>
+            </div>
+
+            <div class="content-display-area" id="comparisons-content-area">
+                <div class="comparison-entry" id="comparison-id-insertion">
+                    <div class="showcase-header">
+                        <h3>Comparison: ID Insertion</h3>
+                        <div class="carousel-controls">
+                            <div class="carousel-nav-item">
+                                <button class="carousel-button prev" onclick="slideCarousel('comparison-id-insertion-carousel', -1)">❮</button>
+                                <span class="carousel-nav-label">Previous</span>
+                            </div>
+                            <div class="carousel-nav-item">
+                                <span class="carousel-nav-label">Next</span>
+                                <button class="carousel-button next" onclick="slideCarousel('comparison-id-insertion-carousel', 1)">❯</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-container" id="comparison-id-insertion-carousel">
+                        <div class="carousel-track">
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_vace_poster.jpg">
+                                    <source src="videos/insert-comp3.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_vace_poster.jpg">
+                                    <source src="videos/insert-comp2.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_input_poster.jpg">
+                                    <source src="videos/insert-comp1.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-entry" id="comparison-id-swap">
+                    <div class="showcase-header">
+                        <h3>Comparison: ID Swap</h3>
+                        <div class="carousel-controls">
+                            <div class="carousel-nav-item">
+                                <button class="carousel-button prev" onclick="slideCarousel('comparison-id-swap-carousel', -1)">❮</button>
+                                <span class="carousel-nav-label">Previous</span>
+                            </div>
+                            <div class="carousel-nav-item">
+                                <span class="carousel-nav-label">Next</span>
+                                <button class="carousel-button next" onclick="slideCarousel('comparison-id-swap-carousel', 1)">❯</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-container" id="comparison-id-swap-carousel">
+                        <div class="carousel-track">
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_input_poster.jpg">
+                                    <source src="videos/swap-comp1.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_vace_poster.jpg">
+                                    <source src="videos/swap-comp2.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_vace_poster.jpg">
+                                    <source src="videos/swap-comp3.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-entry" id="comparison-delete">
+                    <div class="showcase-header">
+                        <h3>Comparison: ID Deletion</h3>
+                        <div class="carousel-controls">
+                            <div class="carousel-nav-item">
+                                <button class="carousel-button prev" onclick="slideCarousel('comparison-delete-carousel', -1)">❮</button>
+                                <span class="carousel-nav-label">Previous</span>
+                            </div>
+                            <div class="carousel-nav-item">
+                                <span class="carousel-nav-label">Next</span>
+                                <button class="carousel-button next" onclick="slideCarousel('comparison-delete-carousel', 1)">❯</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-container" id="comparison-delete-carousel">
+                        <div class="carousel-track">
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_input_poster.jpg">
+                                    <source src="videos/delete-comp1.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_vace_poster.jpg">
+                                    <source src="videos/delete-comp2.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_vace_poster.jpg">
+                                    <source src="videos/delete-comp3.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_vace_poster.jpg">
+                                    <source src="videos/delete-comp4.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-entry" id="comparison-recam">
+                    <div class="showcase-header">
+                        <h3>Comparison: Re-Camera Control</h3>
+                        <div class="carousel-controls">
+                            <div class="carousel-nav-item">
+                                <button class="carousel-button prev" onclick="slideCarousel('comparison-recam-carousel', -1)">❮</button>
+                                <span class="carousel-nav-label">Previous</span>
+                            </div>
+                            <div class="carousel-nav-item">
+                                <span class="carousel-nav-label">Next</span>
+                                <button class="carousel-button next" onclick="slideCarousel('comparison-recam-carousel', 1)">❯</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-container" id="comparison-recam-carousel">
+                        <div class="carousel-track">
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_input_poster.jpg">
+                                    <source src="videos/recam-comp1.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_vace_poster.jpg">
+                                    <source src="videos/recam-comp2.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_vace_poster.jpg">
+                                    <source src="videos/recam-comp3.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-entry" id="comparison-prop">
+                    <div class="showcase-header">
+                        <h3>Comparison: Propagation</h3>
+                        <div class="carousel-controls">
+                            <div class="carousel-nav-item">
+                                <button class="carousel-button prev" onclick="slideCarousel('comparison-prop-carousel', -1)">❮</button>
+                                <span class="carousel-nav-label">Previous</span>
+                            </div>
+                            <div class="carousel-nav-item">
+                                <span class="carousel-nav-label">Next</span>
+                                <button class="carousel-button next" onclick="slideCarousel('comparison-prop-carousel', 1)">❯</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-container" id="comparison-prop-carousel">
+                        <div class="carousel-track">
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_input_poster.jpg">
+                                    <source src="videos/prop-comp1.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_vace_poster.jpg">
+                                    <source src="videos/prop-comp2.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_vace_poster.jpg">
+                                    <source src="videos/prop-comp3.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_vace_poster.jpg">
+                                    <source src="videos/prop-comp4.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-entry" id="comparison-style">
+                    <div class="showcase-header">
+                        <h3>Comparison: Stylization</h3>
+                        <div class="carousel-controls">
+                            <div class="carousel-nav-item">
+                                <button class="carousel-button prev" onclick="slideCarousel('comparison-stylization-carousel', -1)">❮</button>
+                                <span class="carousel-nav-label">Previous</span>
+                            </div>
+                            <div class="carousel-nav-item">
+                                <span class="carousel-nav-label">Next</span>
+                                <button class="carousel-button next" onclick="slideCarousel('comparison-stylization-carousel', 1)">❯</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-container" id="comparison-stylization-carousel">
+                        <div class="carousel-track">
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_input_poster.jpg">
+                                    <source src="videos/style-comp1.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_vace_poster.jpg">
+                                    <source src="videos/style-comp2.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_vace_poster.jpg">
+                                    <source src="videos/style-comp3.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <div class="carousel-item">
+                                <video class="video-player" playsinline autoplay muted loop poster="videos/posters/compare_id_insert_vace_poster.jpg">
+                                    <source src="videos/style-comp4.mp4" type="video/mp4"> Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- End of comparisons-content-area -->
+        </div>
+    </section>
+
+    <section id="results" class="section">
+        <div class="container section-inner">
+            <h2 class="centered-title">Quantitative Performance Insights</h2>
+            <div class="tabs"> 
+                <button class="tab-button active" onclick="openTab(event, 'QuantTab')">Full Quantitative Results (Table 1)</button>
+                <button class="tab-button" onclick="openTab(event, 'TrainingStrategyTab')">Training Strategy</button>
+            </div>
+
+            <div id="QuantTab" class="tab-content active">
+                <h3>Quantitative Benchmarks</h3>
+                <p style="text-align:center; font-size:0.95rem; color:var(--text-color-main); margin-bottom:28px; font-weight:300;">UNIC consistently demonstrates competitive or superior performance across all benchmarked tasks. The following table mirrors Table 1 from our paper.</p>
+                <div class="results-table-container">
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">Method</th>
+                                <th colspan="2">Identity</th>
+                                <th>Alignment</th>
+                                <th colspan="3">Video Quality</th>
+                            </tr>
+                            <tr>
+                                <th>CLIP-I↑</th>
+                                <th>DINO-I↑</th>
+                                <th>CLIP-score↑</th>
+                                <th>Smoothness↑</th>
+                                <th>Dynamic↑</th>
+                                <th>Aesthetic↑</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="7" class="task-group-header">ID Insert</td></tr>
+                            <tr>
+                                <td class="method-name">VACE [20]</td>
+                                <td>0.522</td> <td>0.110</td> <td>0.100</td> <td>0.933</td> <td><strong>44.568</strong></td> <td>5.407</td>
+                            </tr>
+                            <tr>
+                                <td class="method-name">Ours</td>
+                                <td><strong>0.598</strong></td> <td><strong>0.245</strong></td> <td><strong>0.216</strong></td> <td><strong>0.961</strong></td> <td>11.07</td> <td><strong>5.627</strong></td>
+                            </tr>
+                            <tr><td colspan="7" class="task-group-header">ID Swap</td></tr>
+                            <tr>
+                                <td class="method-name">VACE [20]</td>
+                                <td>0.712</td> <td>0.423</td> <td>0.230</td> <td>0.964</td> <td><strong>29.306</strong></td> <td>6.015</td>
+                            </tr>
+                            <tr>
+                                <td class="method-name">AnyV2V(Prop) [13]</td>
+                                <td>0.605</td> <td>0.229</td> <td>0.218</td> <td>0.917</td> <td>7.596</td> <td>4.842</td>
+                            </tr>
+                            <tr>
+                                <td class="method-name">Ours(Prop)</td>
+                                <td>0.693</td> <td>0.414</td> <td>0.236</td> <td><strong>0.980</strong></td> <td>5.153</td> <td>5.801</td>
+                            </tr>
+                            <tr>
+                                <td class="method-name">Ours</td>
+                                <td><strong>0.725</strong></td> <td><strong>0.429</strong></td> <td><strong>0.242</strong></td> <td>0.971</td> <td>7.500</td> <td><strong>6.056</strong></td>
+                            </tr>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th rowspan="2">Method</th>
+                                <th colspan="2">Video Reconstruction</th>
+                                <th>Alignment</th>
+                                <th colspan="3">Video Quality</th>
+                            </tr>
+                            <tr>
+                                <th>PSNR↑</th>
+                                <th>RefVideo-CLIP↑</th>
+                                <th>CLIP-score↑</th>
+                                <th>Smoothness↑</th>
+                                <th>Dynamic↑</th>
+                                <th>Aesthetic↑</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="7" class="task-group-header">ID Delete</td></tr>
+                            <tr>
+                                <td class="method-name">AnyV2V(Prop) [13]</td>
+                                <td>19.504</td> <td>0.869</td> <td>0.205</td> <td>0.964</td> <td>4.980</td> <td>5.325</td>
+                            </tr>
+                            <tr>
+                                <td class="method-name">VACE [20]</td>
+                                <td>20.947</td> <td>0.883</td> <td>0.211</td> <td>0.966</td> <td><strong>15.441</strong></td> <td>5.332</td>
+                            </tr>
+                            <tr>
+                                <td class="method-name">VideoPainter [32]</td>
+                                <td><strong>22.987</strong></td> <td><strong>0.920</strong></td> <td>0.212</td> <td>0.957</td> <td>13.759</td> <td>5.403</td>
+                            </tr>
+                            <tr>
+                                <td class="method-name">Ours(Prop)</td>
+                                <td>20.378</td> <td>0.906</td> <td>0.209</td> <td>0.968</td> <td>9.017</td> <td>5.408</td>
+                            </tr>
+                            <tr>
+                                <td class="method-name">Ours</td>
+                                <td>19.171</td> <td>0.900</td> <td><strong>0.217</strong></td> <td><strong>0.970</strong></td> <td>10.934</td> <td><strong>5.493</strong></td>
+                            </tr>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th rowspan="2">Method</th>
+                                <th colspan="2">Frame Alignment</th>
+                                <th>Alignment</th>
+                                <th colspan="3">Video Quality</th>
+                            </tr>
+                            <tr>
+                                <th colspan="2">RefVideo-CLIP↑</th>
+                                <th>CLIP-score↑</th>
+                                <th>Smoothness↑</th>
+                                <th>Dynamic↑</th>
+                                <th>Aesthetic↑</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="7" class="task-group-header">Propagation</td></tr>
+                            <tr>
+                                <td class="method-name">AnyV2V [13]</td>
+                                <td colspan="2">0.812</td> <td>0.229</td> <td>0.935</td> <td>13.462</td> <td>5.136</td>
+                            </tr>
+                            <tr>
+                                <td class="method-name">VACE(I2V) [20]</td>
+                                <td colspan="2">0.574</td> <td><strong>0.234</strong></td> <td>0.932</td> <td><strong>36.783</strong></td> <td>5.425</td>
+                            </tr>
+                            <tr>
+                                <td class="method-name">Ours</td>
+                                <td colspan="2"><strong>0.840</strong></td> <td>0.226</td> <td><strong>0.966</strong></td> <td>12.762</td> <td><strong>5.565</strong></td>
+                            </tr>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th rowspan="2">Method</th>
+                                <th colspan="2">Style & Content</th>
+                                <th>Alignment</th>
+                                <th colspan="3">Video Quality</th>
+                            </tr>
+                            <tr>
+                                <th>CSD-Score↑</th>
+                                <th>ArtFID↓</th>
+                                <th>CLIP-score↑</th>
+                                <th>Smoothness↑</th>
+                                <th>Dynamic↑</th>
+                                <th>Aesthetic↑</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="7" class="task-group-header">Stylization</td></tr>
+                            <tr>
+                                <td class="method-name">AnyV2V(Prop) [13]</td>
+                                <td>0.207</td><td>43.299</td><td>0.195</td><td>0.937</td><td>9.227</td><td>4.640</td>
+                            </tr>
+                            <tr>
+                                <td class="method-name">StyleMaster [11]</td>
+                                <td><strong>0.306</strong></td><td>38.213</td><td>0.188</td><td><strong>0.952</strong></td><td>9.758</td><td>5.121</td>
+                            </tr>
+                            <tr>
+                                <td class="method-name">Ours(Prop)</td>
+                                <td>0.197</td><td><strong>36.198</strong></td><td><strong>0.215</strong></td><td>0.932</td><td><strong>11.569</strong></td><td>5.045</td>
+                            </tr>
+                            <tr>
+                                <td class="method-name">Ours</td>
+                                <td>0.259</td><td>37.619</td><td>0.171</td><td>0.945</td><td>9.370</td><td><strong>5.276</strong></td>
+                            </tr>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th rowspan="2">Method</th>
+                                <th colspan="2">Camera Control</th>
+                                <th>Alignment</th>
+                                <th colspan="3">Video Quality</th>
+                            </tr>
+                            <tr>
+                                <th>RotErr↓</th>
+                                <th>TransErr↓</th>
+                                <th>CLIP-score↑</th>
+                                <th>Smoothness↑</th>
+                                <th>Dynamic↑</th>
+                                <th>Aesthetic↑</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="7" class="task-group-header">Re-Camera Control</td></tr>
+                            <tr>
+                                <td class="method-name">ReCamMaster-Wan [17]</td>
+                                <td>1.454</td><td>5.695</td><td>0.219</td><td>0.917</td><td><strong>31.751</strong></td><td>4.738</td>
+                            </tr>
+                            <tr>
+                                <td class="method-name">Ours</td>
+                                <td><strong>1.275</strong></td><td><strong>5.667</strong></td><td><strong>0.220</strong></td><td><strong>0.933</strong></td><td>24.21</td><td><strong>4.826</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                 <p style="text-align:center; font-size:0.85rem; color:var(--text-color-subtle); margin-top:18px;"><em>Note: ↑ indicates higher is better, ↓ indicates lower is better. Best results are in <strong>bold</strong>. Please refer to the full Table 1 in the paper for all metrics and detailed comparisons.</em></p>
+            </div>
+            
+            <div id="TrainingStrategyTab" class="tab-content">
+                <h3>Training Strategy Visualization</h3>
+                <div style="display: flex; justify-content: center; margin-bottom: 25px;">
+                    <div class="architecture-img-placeholder" style="width: 90%; max-width: 750px; aspect-ratio: 16 / 7;">
+                        <img src="images/strategy.png" alt="Figure illustrating the training stages/curriculum - e.g., Figure 2 from paper">
+                    </div>
+                </div>
+                <p style="text-align: justify; font-size:0.95rem; color:var(--text-color-main); margin: 0 auto 28px auto; max-width: 800px; font-weight:300; line-height:1.8;">
+                    Here we demonstrate two training strategies and the data volume of each task.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>.</p>
+        </div>
+    </footer>
+
+<script>
+    // Original Tab functionality (for Results section)
+    function openTab(evt, tabName) {
+        var i, tabcontent, tabbuttons;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tabbuttons = document.querySelectorAll("#results .tabs .tab-button"); 
+        for (i = 0; i < tabbuttons.length; i++) {
+            tabbuttons[i].classList.remove("active");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.classList.add("active");
+    }
+
+    // Carousel functionality
+    const carousels = {};
+    function slideCarousel(carouselId, direction) {
+        const carouselContainer = document.getElementById(carouselId);
+        if (!carouselContainer) return;
+
+        const track = carouselContainer.querySelector('.carousel-track');
+        const items = track.querySelectorAll('.carousel-item');
+        const numItems = items.length;
+        const showcaseHeader = carouselContainer.closest('.task-entry, .comparison-entry');
+        let prevButton, nextButton;
+        if (showcaseHeader) { 
+             const controls = showcaseHeader.querySelector('.carousel-controls');
+             if (controls) {
+                prevButton = controls.querySelector('.carousel-button.prev');
+                nextButton = controls.querySelector('.carousel-button.next');
+             }
+        }
+
+        if (numItems <= 1) {
+            if(prevButton) prevButton.disabled = true;
+            if(nextButton) nextButton.disabled = true;
+            if (numItems === 1) {
+                const singleVideo = items[0] ? items[0].querySelector('video') : null;
+                if (singleVideo) {
+                     const parentEntry = carouselContainer.closest('.task-entry, .comparison-entry');
+                     let isEffectivelyVisible = false;
+                     if (parentEntry) {
+                        if (parentEntry.classList.contains('active')) { isEffectivelyVisible = true; } 
+                        else {
+                            const tabControlledParent = parentEntry.closest('.content-display-area');
+                            const isInsideTabSystem = tabControlledParent && tabControlledParent.previousElementSibling && tabControlledParent.previousElementSibling.classList.contains('content-selector-tabs');
+                            if (!isInsideTabSystem && getComputedStyle(parentEntry).display !== 'none') { isEffectivelyVisible = true; }
+                        }
+                     }
+                    if (singleVideo.hasAttribute('autoplay') && isEffectivelyVisible) {
+                        singleVideo.play().catch(error => console.warn("Single video play failed:", error));
+                    }
+                }
+            }
+            return;
+        }
+
+        if (!carousels[carouselId]) {
+            carousels[carouselId] = { currentIndex: 0 };
+        }
+
+        const oldIndex = carousels[carouselId].currentIndex;
+        let newIndex = oldIndex + direction;
+
+        if (newIndex < 0) newIndex = 0; 
+        else if (newIndex >= numItems) newIndex = numItems - 1;
+        
+        carousels[carouselId].currentIndex = newIndex;
+        track.style.transform = `translateX(${-newIndex * 100}%)`;
+
+        const oldVideo = items[oldIndex] ? items[oldIndex].querySelector('video') : null;
+        const newVideo = items[newIndex] ? items[newIndex].querySelector('video') : null;
+
+        if (oldVideo && oldVideo !== newVideo) { 
+            oldVideo.pause();
+            oldVideo.currentTime = 0; 
+        }
+        if (newVideo) {
+            const parentEntry = carouselContainer.closest('.task-entry, .comparison-entry');
+            let isEffectivelyVisible = false;
+            if (parentEntry) {
+                if (parentEntry.classList.contains('active')) { // Part of active tab in a tab system
+                    isEffectivelyVisible = true;
+                } else {
+                    // Check if it's an "always visible" entry (i.e., not part of a tabbed display area that hides inactive items)
+                    const tabControlledParent = parentEntry.closest('.content-display-area');
+                    // An entry is part of a tab system if it's inside a .content-display-area that has .content-selector-tabs as a sibling
+                    const isInsideTabSystem = tabControlledParent && tabControlledParent.previousElementSibling && tabControlledParent.previousElementSibling.classList.contains('content-selector-tabs');
+                    
+                    if (!isInsideTabSystem) { // If not part of such a system, it's considered always visible if its parentEntry itself is not display:none
+                       if (getComputedStyle(parentEntry).display !== 'none') {
+                           isEffectivelyVisible = true;
+                       }
+                    }
+                }
+            }
+            if (newVideo.hasAttribute('autoplay') && isEffectivelyVisible) { 
+                newVideo.play().catch(error => console.warn("Video play failed for:", newVideo.src, error));
+            }
+        }
+
+        if(prevButton) prevButton.disabled = (newIndex === 0);
+        if(nextButton) nextButton.disabled = (newIndex === numItems - 1);
+    }
+
+    // New Content Tabs functionality (for Capabilities & Comparisons)
+    function initializeContentTabs(selectorId, contentAreaId, contentEntryClass, defaultActiveId) {
+        const selectorContainer = document.getElementById(selectorId);
+        const contentArea = document.getElementById(contentAreaId);
+
+        if (!selectorContainer || !contentArea) {
+            return;
+        }
+
+        const buttons = selectorContainer.querySelectorAll('.content-tab-button');
+        const contentEntries = contentArea.querySelectorAll('.' + contentEntryClass);
+
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.dataset.targetId;
+
+                buttons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                let activeCarouselId = null;
+
+                contentEntries.forEach(entry => {
+                    const entryVideos = entry.querySelectorAll('video'); 
+                    if (entry.id === targetId) {
+                        entry.classList.add('active');
+                        const carousel = entry.querySelector('.carousel-container');
+                        if (carousel) {
+                            activeCarouselId = carousel.id;
+                        } else if (entryVideos.length > 0 && entryVideos[0].hasAttribute('autoplay')) { 
+                            entryVideos[0].play().catch(e => console.warn("Autoplay failed for single video:", e));
+                        }
+                    } else {
+                        entry.classList.remove('active');
+                        entryVideos.forEach(vid => {
+                            if (!vid.paused) {
+                                vid.pause();
+                                vid.currentTime = 0;
+                            }
+                        });
+                    }
+                });
+
+                if (activeCarouselId) {
+                    slideCarousel(activeCarouselId, 0); 
+                }
+            });
+        });
+
+        let initialButtonToClick = null;
+        if (defaultActiveId) {
+            initialButtonToClick = selectorContainer.querySelector(`.content-tab-button[data-target-id="${defaultActiveId}"]`);
+        }
+        
+        if (initialButtonToClick) {
+            initialButtonToClick.click();
+        } else if (buttons.length > 0) { 
+            buttons[0].click();
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const firstResultsTabButton = document.querySelector('#results .tabs .tab-button');
+        if (firstResultsTabButton) {
+            firstResultsTabButton.click();
+        }
+
+        document.querySelectorAll('.carousel-container').forEach(carouselContainer => {
+            const track = carouselContainer.querySelector('.carousel-track');
+            if (track) {
+                track.style.transform = 'translateX(0%)'; 
+                carousels[carouselContainer.id] = { currentIndex: 0 };
+                slideCarousel(carouselContainer.id, 0); 
+            }
+        });
+        
+        initializeContentTabs('capabilities-selector', 'capabilities-content-area', 'task-entry', 'task-id-insertion');
+        initializeContentTabs('comparisons-selector', 'comparisons-content-area', 'comparison-entry', 'comparison-id-insertion');
+
+        const navLinks = document.querySelectorAll('nav a');
+        let sections = [];
+
+        function updateSectionsArray() {
+            sections = [];
+            navLinks.forEach(link => {
+                try {
+                    const href = link.getAttribute('href');
+                    if (href && href.startsWith('#')) {
+                        const section = document.querySelector(href);
+                        if (section) sections.push(section);
+                    }
+                } catch (e) { /* console.warn("Invalid selector for nav link:", link.getAttribute('href'), e); */ }
+            });
+            sections.sort((a, b) => a.offsetTop - b.offsetTop);
+        }
+        updateSectionsArray();
+
+        function changeNavActiveState() {
+            let currentSectionId = '';
+            const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+            const navElement = document.querySelector('nav');
+            const navHeight = navElement ? navElement.offsetHeight + 30 : 80;
+
+            for (let i = sections.length - 1; i >= 0; i--) {
+                const section = sections[i];
+                if (scrollPosition >= section.offsetTop - navHeight) {
+                    currentSectionId = section.getAttribute('id');
+                    break;
+                }
+            }
+            
+            if (!currentSectionId && navLinks.length > 0 && sections.length > 0 && scrollPosition < sections[0].offsetTop - navHeight) {
+                 const firstNavLinkHref = navLinks[0].getAttribute('href');
+                 if(firstNavLinkHref && firstNavLinkHref.startsWith('#')) {
+                    currentSectionId = firstNavLinkHref.substring(1);
+                 }
+            }
+
+            let activeLinkSet = false;
+            navLinks.forEach(link => {
+                link.classList.remove('active-nav');
+                const linkHref = link.getAttribute('href');
+                if (linkHref && linkHref === '#' + currentSectionId) {
+                    link.classList.add('active-nav');
+                    activeLinkSet = true;
+                }
+            });
+
+            if (!activeLinkSet && navLinks.length > 0) { 
+                navLinks[0].classList.add('active-nav');
+            }
+        }
+
+        if (navLinks.length > 0) {
+            changeNavActiveState(); 
+            window.addEventListener('scroll', changeNavActiveState, { passive: true });
+        }
+
+        navLinks.forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                try {
+                    const targetSection = document.querySelector(targetId);
+                    if (targetSection) {
+                        const navbarHeight = document.querySelector('nav').offsetHeight;
+                        const targetPosition = targetSection.offsetTop - navbarHeight - 15;
+                        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+
+                        navLinks.forEach(link => link.classList.remove('active-nav'));
+                        this.classList.add('active-nav');
+                    }
+                } catch (err) { /* console.warn("Could not scroll to target:", targetId, err); */ }
+            });
+        });
+    });
+</script>
+</body>
+</html>
