@@ -6,6 +6,7 @@
     <title>UNIC: Unified In-Context Video Editing</title>
     <link rel="icon" href="image/icon.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --primary-color: #6C8EAD;
@@ -489,6 +490,16 @@
             <div class="highlight-box">
                 <p><strong>UNIC (UNified In-Context Video Editing)</strong> is a simple yet effective framework that unifies diverse video editing tasks within a single model in an in-context manner.</p>
             </div>
+
+            <!-- Demo Video Added Here -->
+            <div style="margin-top: 35px; margin-bottom: 20px;">
+                <video class="video-player" style="max-width: 800px; margin-left: auto; margin-right: auto;" playsinline autoplay muted loop>
+                    <source src="videos/demo.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <!-- End Demo Video -->
+
         </div>
     </section>
 
@@ -1562,6 +1573,13 @@
         initializeContentTabs('capabilities-selector', 'capabilities-content-area', 'task-entry', 'task-id-insertion');
         initializeContentTabs('comparisons-selector', 'comparisons-content-area', 'comparison-entry', 'comparison-id-insertion');
 
+        // Play the demo video in the overview section if it's present
+        const overviewDemoVideo = document.querySelector('#overview .video-player');
+        if (overviewDemoVideo && overviewDemoVideo.hasAttribute('autoplay')) {
+            overviewDemoVideo.play().catch(error => console.warn("Overview demo video autoplay failed:", error));
+        }
+
+
         const navLinks = document.querySelectorAll('nav a');
         let sections = [];
 
@@ -1584,7 +1602,7 @@
             let currentSectionId = '';
             const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
             const navElement = document.querySelector('nav');
-            const navHeight = navElement ? navElement.offsetHeight + 30 : 80;
+            const navHeight = navElement ? navElement.offsetHeight + 30 : 80; // Added offset for better accuracy
 
             for (let i = sections.length - 1; i >= 0; i--) {
                 const section = sections[i];
@@ -1600,6 +1618,7 @@
                     currentSectionId = firstNavLinkHref.substring(1);
                  }
             }
+
 
             let activeLinkSet = false;
             navLinks.forEach(link => {
@@ -1629,11 +1648,14 @@
                     const targetSection = document.querySelector(targetId);
                     if (targetSection) {
                         const navbarHeight = document.querySelector('nav').offsetHeight;
-                        const targetPosition = targetSection.offsetTop - navbarHeight - 15;
+                        const targetPosition = targetSection.offsetTop - navbarHeight - 15; // Adjusted offset
                         window.scrollTo({ top: targetPosition, behavior: 'smooth' });
 
-                        navLinks.forEach(link => link.classList.remove('active-nav'));
-                        this.classList.add('active-nav');
+                        // Defer active state update slightly to allow scroll to catch up for immediate visual feedback
+                        // or rely on the scroll event handler to update it correctly.
+                        // For immediate click feedback:
+                        // navLinks.forEach(link => link.classList.remove('active-nav'));
+                        // this.classList.add('active-nav');
                     }
                 } catch (err) { /* console.warn("Could not scroll to target:", targetId, err); */ }
             });
